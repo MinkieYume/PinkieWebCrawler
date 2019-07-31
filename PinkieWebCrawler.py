@@ -172,7 +172,6 @@ class PonyCrawler4399:#定义4399小马爬虫类，实现爬取4399资源的功�
         StoriesList=[]
         Storyindex = 0
         print('开始 获取小马故事中.....总共有%d个故事。'%len(lines))
-        print('你的网线被小呆吃掉了呢！')
         for line in lines:
             try:
                 story={'title':'','href':'','discus':''}
@@ -186,7 +185,6 @@ class PonyCrawler4399:#定义4399小马爬虫类，实现爬取4399资源的功�
                 StoriesList.append(story)
                 Storyindex+=1
                 print('已经获取了%d/%d个故事'%(Storyindex,len(lines)))
-                print(story)
             except:
                 print('这个页面已经被小呆吞掉了哦')
         with open('4399Stories.txt','wb') as h:
@@ -196,8 +194,80 @@ class PonyCrawler4399:#定义4399小马爬虫类，实现爬取4399资源的功�
                 h.write('介绍：'.encode('utf-8')+PPwrites['discus'].encode('utf-8')+'\n\n'.encode('utf-8'))
                 h.write('地址：'.encode('utf-8')+PPwrites['href'].encode('utf-8')+'\n\n'.encode('utf-8'))
                 Storyindex+=1
-                print('已经写入了%d/%d个故事'%(Storyindex,len(lines))
+                print('已经写入了%d/%d个故事'%(Storyindex,len(lines)))
+    def getcomic(link="http://www.4399er.com/xzt/xmblmh/"):
+        ComicStations=urllib.request.urlopen(link)
+        Htmls=BeautifulSoup(ComicStations.read().decode('utf-8'),'html.parser')
+        lines=Htmls.ul.find_all("li")
+        StoriesList=[]
+        Storyindex = 0
+        print('开始 获取小马漫画中.....总共有%d个漫画。'%len(lines))
+        for line in lines:
+            try:
+                story={'title':'','href':'','discus':''}
+                storytab=line.find(name="a",class_="tit")
+                story.update(title=storytab.get_text())
+                story.update(href='http://www.4399er.com'+storytab['href'])
+                discuss=urllib.request.urlopen(story['href'])
+                discussoup=BeautifulSoup(discuss.read().decode('utf-8'),'html.parser')
+                discuss=urllib.request.urlopen(story['href'])
+                discussoup=BeautifulSoup(discuss.read().decode('utf-8'),'html.parser')
+                discustext=discussoup.find(name='div',class_='introduce__body-intro').get_text()
+                story.update(discus=discustext)
+                StoriesList.append(story)
+                Storyindex+=1
+                print('已经获取了%d/%d个漫画'%(Storyindex,len(lines)))
+            except:
+                print('这个页面已经被小呆吞掉了哦')
+        with open('4399Comic.txt','wb') as h:
+            Storyindex=0
+            for PPwrites in StoriesList:
+                h.write('标题：'.encode('utf-8')+PPwrites['title'].encode('utf-8')+'\n\n'.encode('utf-8'))
+                h.write('介绍：'.encode('utf-8')+PPwrites['discus'].encode('utf-8')+'\n\n'.encode('utf-8'))
+                h.write('地址：'.encode('utf-8')+PPwrites['href'].encode('utf-8')+'\n\n'.encode('utf-8'))
+                Storyindex+=1
+                print('已经写入了%d/%d个漫画'%(Storyindex,len(lines)))
+
+    def getEQG(link="http://www.4399er.com/xzt/xmblmh/"):
+        EQGStations=urllib.request.urlopen(link)
+        Htmls=BeautifulSoup(EQGStations.read().decode('utf-8'),'html.parser')
+        lines=Htmls.ul.find_all("li")
+        StoriesList=[]
+        Storyindex = 0
+        print('开始 获取小马国女孩中.....总共有%d个女孩。'%len(lines))
+        for line in lines:
+            try:
+                story={'title':'','href':'','discus':''}
+                storytab=line.find(name="a",class_="tit")
+                story.update(title=storytab.get_text())
+                story.update(href='http://www.4399er.com'+storytab['href'])
+                discuss=urllib.request.urlopen(story['href'])
+                discussoup=BeautifulSoup(discuss.read().decode('utf-8'),'html.parser')
+                try:
+                    discustext=discussoup.find(name='span',style="color: rgb(0, 128, 128);").get_text()
+                    story.update(discus=discustext)
+                except:
+                    try:
+                        discustext=discussoup.find(name='span',style="color: #008080").get_text()
+                        story.update(discus=discustext)
+                    except:
+                        discustext='暂无'
+                StoriesList.append(story)
+                Storyindex+=1
+                print('已经获取了%d/%d个女孩视频'%(Storyindex,len(lines)))
+            except:
+                print('这个页面已经被小呆吞掉了哦')
+        with open('4399Comic.txt','wb') as h:
+            Storyindex=0
+            for PPwrites in StoriesList:
+                h.write('标题：'.encode('utf-8')+PPwrites['title'].encode('utf-8')+'\n\n'.encode('utf-8'))
+                h.write('介绍：'.encode('utf-8')+PPwrites['discus'].encode('utf-8')+'\n\n'.encode('utf-8'))
+                h.write('地址：'.encode('utf-8')+PPwrites['href'].encode('utf-8')+'\n\n'.encode('utf-8'))
+                Storyindex+=1
+                print('已经写入了%d/%d个漫画'%(Storyindex,len(lines)))
 if __name__ =='__main__':#测试运行程序
-    PonyCrawler4399.getmusic(mode=1)
-    PonyCrawler4399.getstories()
+    #PonyCrawler4399.getmusic(mode=1)
+    #PonyCrawler4399.getstories()
+    #PonyCrawler4399.getcomic()
+    PonyCrawler4399.getEQG()
     pass
